@@ -38,6 +38,9 @@
 (defvar org-randomnote-candidates org-agenda-files
   "The files that org-randomnote will draw from in finding a random note. Defaults to `org-agenda-files'.")
 
+(defvar org-randomnote-behavior 'default
+  "Configure the behavior that org-randomnote uses to open a random note. Set to `default' or `indirect-buffer.'")
+
 (defun f-empty? (f)
   "Check if a file F is empty."
   (= (f-size f) 0))
