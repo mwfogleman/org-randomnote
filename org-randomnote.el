@@ -45,8 +45,8 @@
   "Go to a header in an Org file."
   (when (equal major-mode 'org-mode)
     (if (org-at-heading-p)
-	(org-beginning-of-line)
-      (org-up-element))))
+	(beginning-of-line)
+      (outline-previous-heading))))
 
 (defun org-randomnote--get-randomnote-candidates ()
   "Remove empty files from `org-randomnote-candidates'."
