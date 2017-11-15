@@ -42,6 +42,9 @@
 (defun file-empty-p (f)
   (= (f-size f) 0))
 
+(defun org-randomnote-get-randomnote-candidates ()
+  (-remove 'file-empty-p org-randomnote-candidates))
+
 (defun org-go-to-header ()
   (when (equal major-mode 'org-mode)
     (if (org-at-heading-p)
@@ -49,14 +52,10 @@
       (org-up-element))))
 
 (defun org-get-random-file ()
-  (let* ((cnt (length org-randomnote-list))
+  (let* ((cands (org-randomnote-get-randomnote-candidates))
+	 (cnt (length org-randomnote-list))
 	 (nmbr (random cnt)))
-    (nth nmbr org-randomnote-candidates)))
-
-(defun org-get-random-file ()
-  (let* ((cnt (length org-randomnote-list))
-	 (nmbr (random cnt)))
-    (nth nmbr org-randomnote-candidates)))
+    (nth nmbr cands)))
 
 (defun org-go-to-random-header (f)
   (find-file f)
