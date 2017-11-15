@@ -38,7 +38,7 @@
 (defvar org-randomnote-candidates org-agenda-files
   "The files that org-randomnote will draw from in finding a random note.  Defaults to `org-agenda-files'.")
 
-(defvar org-randomnote-behavior 'default
+(defvar org-randomnote-open-behavior 'default
   "Configure the behavior that org-randomnote uses to open a random note.  Set to `default' or `indirect-buffer'.")
 
 (defun f-empty? (f)
@@ -89,8 +89,8 @@
   "Go to a random note within a random Org file."
   (interactive)
   (let* ((f (org-randomnote--get-random-file)))
-    (cond ((eq org-randomnote-behavior 'default) (org-randomnote--go-to-random-header f))
-	  ((eq org-randomnote-behavior 'indirect-buffer) (org-randomnote--with-indirect-buffer f)))))
+    (cond ((eq org-randomnote-open-behavior 'default) (org-randomnote--go-to-random-header f))
+	  ((eq org-randomnote-open-behavior 'indirect-buffer) (org-randomnote--with-indirect-buffer f)))))
 
 (provide 'org-randomnote)
 
