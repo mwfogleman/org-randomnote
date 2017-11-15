@@ -35,7 +35,8 @@
 (require 'dash)
 (require 'f)
 
-(defvar org-randomnote-candidates org-agenda-files)
+(defvar org-randomnote-candidates org-agenda-files
+  "The files that org-randomnote will draw from in finding a random note. Defaults to `org-agenda-files'.")
 
 (defun f-empty? (f)
   "Check if a file F is empty."
