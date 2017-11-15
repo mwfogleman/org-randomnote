@@ -77,12 +77,7 @@
   (interactive)
   (org-randomnote--go-to-random-header (org-randomnote--get-random-file)))
 
-;; Bugs:
-;; find-file-noselect: Wrong type argument: stringp, nil
-
-;; Snippets
-;; (when (org-at-drawer-p)
-;;   (org-randomnote--go-to-header))
+;; Snippets:
 
 ;; (org-tree-to-indirect-buffer)
 ;; (switch-to-buffer (other-buffer))
