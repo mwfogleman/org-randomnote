@@ -34,48 +34,52 @@
 
 (defvar org-randomnote-candidates org-agenda-files)
 
-(defun file-empty-p (f)
+(defun f-empty? (f)
   "Check if a file F is empty."
   (= (f-size f) 0))
 
-(defun org-go-to-header ()
+(defun org-randomnote--go-to-header ()
   "Go to a header in an Org file."
   (when (equal major-mode 'org-mode)
     (if (org-at-heading-p)
 	(org-beginning-of-line)
       (org-up-element))))
 
-(defun org-randomnote-get-randomnote-candidates ()
+(defun org-randomnote--get-randomnote-candidates ()
   "Remove empty files from `org-randomnote-candidates'."
-  (-remove 'file-empty-p org-randomnote-candidates))
+  (-remove 'f-empty? org-randomnote-candidates))
 
-(defun org-get-random-file ()
+(defun org-randomnote--get-random-file ()
   "Select a random file from `org-randomnote-candidates'."
-  (let* ((cands (org-randomnote-get-randomnote-candidates))
+  (let* ((cands (org-randomnote--get-randomnote-candidates))
 	 (cnt (length cands))
 	 (nmbr (random cnt)))
     (nth nmbr cands)))
 
-(defun org-go-to-random-header (f)
+(defun org-randomnote--get-random-line ()
+  "Get a random line within the current file."
+  (random (count-lines (point-min) (point-max))))
+
+(defun org-randomnote--go-to-random-header (f)
   "Given a file F, go to a random header within that file."
   (find-file f)
-  (let* ((l (random (count-lines (point-min) (point-max)))))
-    (goto-line l)
-    (org-go-to-header)
+  (let* ((l (org-randomnote--get-random-line)))
+    (org-goto-line l)
+    (org-randomnote--go-to-header)
     (outline-show-all)
     (recenter-top-bottom 0)))
 
 (defun org-randomnote ()
   "Go to a random note within a random Org file."
   (interactive)
-  (org-go-to-random-header (org-get-random-file)))
+  (org-randomnote--go-to-random-header (org-randomnote--get-random-file)))
 
 ;; Bugs:
 ;; find-file-noselect: Wrong type argument: stringp, nil
 
 ;; Snippets
 ;; (when (org-at-drawer-p)
-;;   (org-go-to-header))
+;;   (org-randomnote--go-to-header))
 
 ;; (org-tree-to-indirect-buffer)
 ;; (switch-to-buffer (other-buffer))
