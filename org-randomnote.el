@@ -63,24 +63,21 @@
 	 (nmbr (random cnt)))
     (nth nmbr cands)))
 
-(defun org-randomnote--get-random-line ()
-  "Get a random line within the current file."
-  (random (count-lines (point-min) (point-max))))
-
 (defun org-randomnote--go-to-random-line (f)
+  "Go to a random line within an Org file F."
   (find-file f)
-  (let* ((l (org-randomnote--get-random-line)))
+  (let* ((l (random (count-lines (point-min) (point-max)))))
     (org-goto-line l)))
 
 (defun org-randomnote--go-to-random-header (f)
-  "Given a file F, go to a random header within that file."
+  "Given an Org file F, go to a random header within that file."
   (org-randomnote--go-to-random-line f)
   (org-randomnote--go-to-header)
   (outline-show-all)
   (recenter-top-bottom 0))
 
 (defun org-randomnote--with-indirect-buffer (f)
-  "Given a file F, go to a random header within that file."
+  "Given an Org file F, go to a random header within that file."
   (org-randomnote--go-to-random-line f)
   (org-randomnote--go-to-header)
   (org-tree-to-indirect-buffer)
