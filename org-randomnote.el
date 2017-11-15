@@ -76,15 +76,21 @@
     (outline-show-all)
     (recenter-top-bottom 0)))
 
+(defun org-randomnote--with-indirect-buffer (f)
+  "Given a file F, go to a random header within that file."
+  (find-file f)
+  (let* ((l (org-randomnote--get-random-line)))
+    (org-goto-line l)
+    (org-randomnote--go-to-header)
+    (org-tree-to-indirect-buffer)
+    (switch-to-buffer (other-buffer))))
+
 (defun org-randomnote ()
   "Go to a random note within a random Org file."
   (interactive)
-  (org-randomnote--go-to-random-header (org-randomnote--get-random-file)))
-
-;; Snippets:
-
-;; (org-tree-to-indirect-buffer)
-;; (switch-to-buffer (other-buffer))
+  (let* ((f (org-randomnote--get-random-file)))
+    (cond ((eq org-randomnote-behavior 'default) (org-randomnote--go-to-random-header f))
+	  ((eq org-randomnote-behavior 'indirect-buffer) (org-randomnote--with-indirect-buffer f)))))
 
 (provide 'org-randomnote)
 
