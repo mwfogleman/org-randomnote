@@ -4,7 +4,7 @@
 
 ;; Author: Michael Fogleman <michaelwfogleman@gmail.com>
 ;; URL: http://github.com/mwfogleman/org-randomnote
-;; Package-Requires: ((f "0.19.0"))
+;; Package-Requires: ((f "0.19.0") (dash "2.13.0"))
 
 ;; This file is NOT part of GNU Emacs.
 
