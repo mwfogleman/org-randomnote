@@ -34,30 +34,30 @@
 
 (defvar org-randomnote-candidates org-agenda-files)
 
-;; depends on f.el
-;; https://github.com/rejeep/f.el
-
-;; TODO: Check if selected candidate is empty
-
 (defun file-empty-p (f)
+  "Check if a file F is empty."
   (= (f-size f) 0))
 
-(defun org-randomnote-get-randomnote-candidates ()
-  (-remove 'file-empty-p org-randomnote-candidates))
-
 (defun org-go-to-header ()
+  "Go to a header in an Org file."
   (when (equal major-mode 'org-mode)
     (if (org-at-heading-p)
 	(org-beginning-of-line)
       (org-up-element))))
 
+(defun org-randomnote-get-randomnote-candidates ()
+  "Remove empty files from `org-randomnote-candidates'."
+  (-remove 'file-empty-p org-randomnote-candidates))
+
 (defun org-get-random-file ()
+  "Select a random file from `org-randomnote-candidates'."
   (let* ((cands (org-randomnote-get-randomnote-candidates))
-	 (cnt (length org-randomnote-list))
+	 (cnt (length cands))
 	 (nmbr (random cnt)))
     (nth nmbr cands)))
 
 (defun org-go-to-random-header (f)
+  "Given a file F, go to a random header within that file."
   (find-file f)
   (let* ((l (random (count-lines (point-min) (point-max)))))
     (goto-line l)
@@ -66,6 +66,7 @@
     (recenter-top-bottom 0)))
 
 (defun org-randomnote ()
+  "Go to a random note within a random Org file."
   (interactive)
   (org-go-to-random-header (org-get-random-file)))
 
