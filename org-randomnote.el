@@ -61,11 +61,23 @@
   (find-file f)
   (let* ((l (random (count-lines (point-min) (point-max)))))
     (goto-line l)
-    (org-go-to-header)))
+    (org-go-to-header)
+    (outline-show-all)
+    (recenter-top-bottom 0)))
 
 (defun org-randomnote ()
   (interactive)
   (org-go-to-random-header (org-get-random-file)))
+
+;; Bugs:
+;; find-file-noselect: Wrong type argument: stringp, nil
+
+;; Snippets
+;; (when (org-at-drawer-p)
+;;   (org-go-to-header))
+
+;; (org-tree-to-indirect-buffer)
+;; (switch-to-buffer (other-buffer))
 
 (provide 'org-randomnote)
 
