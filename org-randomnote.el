@@ -32,6 +32,9 @@
 
 ;;; Code:
 
+(require 'dash)
+(require 'f)
+
 (defvar org-randomnote-candidates org-agenda-files)
 
 (defun f-empty? (f)
