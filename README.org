@@ -1,0 +1,23 @@
+=org-randomnote= intends to provide a way to bring randomness into your Org-Mode workflow. It does so by implementing the "Random Note" functionality popularized by Tiago Forte with Evernote in Emacs Org-Mode.
+
+You'll need to clone this repository locally, and then load it into your Emacs configuration. Here is an example configuration, using John Wiegley's =use-package=:
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-randomnote
+    :load-path "~/src/org-randomnote/"
+    :bind ("C-c r" . org-randomnote))
+#+END_SRC
+
+Once loaded, run the interactive command =org-randomnote=.
+
+You can configure which files =org-randomnote= selects from with the variable =org-randomnote-candidates=. It defaults to using =org-agenda-files=, but you can use any list of files:
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-randomnote-candidates '("~/org/todo.org"))
+#+END_SRC
+
+You can also configure the behavior with which =org-randomnote= opens files. By default, it simply moves to a random note's header. However, you can also configure it to use an indirect buffer, like so:
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-randomnote-open-behavior 'indirect-buffer)
+#+END_SRC
