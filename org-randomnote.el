@@ -41,7 +41,7 @@
 (defvar org-randomnote-open-behavior 'default
   "Configure the behavior that org-randomnote uses to open a random note.  Set to `default' or `indirect-buffer'.")
 
-(defun f-empty? (f)
+(defun org-randomnote-f-empty? (f)
   "Check if a file F is empty."
   (= (f-size f) 0))
 
@@ -54,7 +54,7 @@
 
 (defun org-randomnote--get-randomnote-candidates ()
   "Remove empty files from `org-randomnote-candidates'."
-  (-remove 'f-empty? org-randomnote-candidates))
+  (-remove 'org-randomnote-f-empty? org-randomnote-candidates))
 
 (defun org-randomnote--get-random-file ()
   "Select a random file from `org-randomnote-candidates'."
