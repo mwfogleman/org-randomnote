@@ -58,7 +58,7 @@
     (nth nmbr cands)))
 
 (defun org-randomnote--get-random-subtree (f)
-  "Go to a random subtree within an Org file F."
+  "Get a random subtree within an Org file F."
   (find-file f)
   (let* ((subtree-lines (org-map-entries (lambda () (org-current-line)) nil 'file))
 	 (cnt (length subtree-lines))
