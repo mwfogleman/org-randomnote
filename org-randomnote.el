@@ -46,13 +46,6 @@
   "Check if a file F is empty."
   (= (f-size f) 0))
 
-(defun org-randomnote--go-to-header ()
-  "Go to a header in an Org file."
-  (when (equal major-mode 'org-mode)
-    (if (org-at-heading-p)
-	(beginning-of-line)
-      (outline-previous-heading))))
-
 (defun org-randomnote--get-randomnote-candidates ()
   "Remove empty files from `org-randomnote-candidates'."
   (-remove 'org-randomnote-f-empty? org-randomnote-candidates))
@@ -64,23 +57,24 @@
 	 (nmbr (random cnt)))
     (nth nmbr cands)))
 
-(defun org-randomnote--go-to-random-line (f)
-  "Go to a random line within an Org file F."
+(defun org-randomnote--get-random-subtree (f)
+  (interactive)
+  "Go to a random subtree within an Org file F."
   (find-file f)
-  (let* ((l (random (count-lines (point-min) (point-max)))))
-    (org-goto-line l)))
+  (let* ((subtree-lines (org-map-entries (lambda () (org-current-line)) nil 'file))
+	 (cnt (length subtree-lines))
+	 (nmbr (random cnt)))
+    (nth nmbr subtree-lines)))
 
 (defun org-randomnote--go-to-random-header (f)
   "Given an Org file F, go to a random header within that file."
-  (org-randomnote--go-to-random-line f)
-  (org-randomnote--go-to-header)
+  (org-goto-line (org-randomnote--get-random-subtree f))
   (outline-show-all)
   (recenter-top-bottom 0))
 
 (defun org-randomnote--with-indirect-buffer (f)
   "Given an Org file F, go to a random header within that file."
-  (org-randomnote--go-to-random-line f)
-  (org-randomnote--go-to-header)
+  (org-goto-line (org-randomnote--get-random-subtree f))
   (org-tree-to-indirect-buffer)
   (switch-to-buffer (other-buffer)))
 
