@@ -60,7 +60,7 @@
 (defun org-randomnote--get-random-subtree (f)
   "Get a random subtree within an Org file F."
   (find-file f)
-  (let* ((subtree-lines (org-map-entries (lambda () (org-current-line)) nil 'file))
+  (let* ((subtree-lines (org-map-entries (lambda () (line-number-at-pos)) nil 'file))
 	 (cnt (length subtree-lines))
 	 (nmbr (random cnt)))
     (nth nmbr subtree-lines)))
