@@ -50,20 +50,20 @@
   "Remove empty files from `org-randomnote-candidates'."
   (-remove 'org-randomnote-f-empty? org-randomnote-candidates))
 
+(defun org-randomnote--random (seq)
+  "Given an input sequence SEQ, return a random output."
+  (let* ((cnt (length seq))
+	 (nmbr (random cnt)))
+    (nth nmbr seq)))
+
 (defun org-randomnote--get-random-file ()
   "Select a random file from `org-randomnote-candidates'."
-  (let* ((cands (org-randomnote--get-randomnote-candidates))
-	 (cnt (length cands))
-	 (nmbr (random cnt)))
-    (nth nmbr cands)))
+  (org-randomnote--random (org-randomnote--get-randomnote-candidates)))
 
 (defun org-randomnote--get-random-subtree (f)
   "Get a random subtree within an Org file F."
   (find-file f)
-  (let* ((subtree-lines (org-map-entries (lambda () (line-number-at-pos)) nil 'file))
-	 (cnt (length subtree-lines))
-	 (nmbr (random cnt)))
-    (nth nmbr subtree-lines)))
+  (org-randomnote--random (org-map-entries (lambda () (line-number-at-pos)) nil 'file)))
 
 (defun org-randomnote--go-to-random-header (f)
   "Given an Org file F, go to a random header within that file."
