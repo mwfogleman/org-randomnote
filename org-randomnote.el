@@ -36,11 +36,19 @@
 (require 'dash)
 (require 'f)
 
-(defvar org-randomnote-candidates org-agenda-files
-  "The files that org-randomnote will draw from in finding a random note.  Defaults to `org-agenda-files'.")
+(defgroup org-randomnote nil
+  "Find a random note in your Org files."
+  :group 'org)
 
-(defvar org-randomnote-open-behavior 'default
-  "Configure the behavior that org-randomnote uses to open a random note.  Set to `default' or `indirect-buffer'.")
+(defcustom org-randomnote-candidates 'org-agenda-files
+  "The files that org-randomnote will draw from in finding a random note.  Defaults to `org-agenda-files'."
+  :group 'org-randomnote
+  :type 'symbol)
+
+(defcustom org-randomnote-open-behavior '(default indirect-behavior)
+  "Configure the behavior that org-randomnote uses to open a random note.  Set to `default' or `indirect-buffer'."
+  :group 'org-randomnote
+  :type '(repeat symbol))
 
 (defun org-randomnote-f-empty? (f)
   "Check if a file F is empty."
