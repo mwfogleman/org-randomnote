@@ -1,10 +1,12 @@
+[[https://melpa.org/#/org-randomnote][file:https://melpa.org/packages/org-randomnote-badge.svg]]
+
 =org-randomnote= intends to provide a way to bring randomness into your Org-Mode workflow. It does so by implementing the "Random Note" functionality popularized by Tiago Forte with Evernote in Emacs Org-Mode.
 
-You'll need to clone this repository locally, and then load it into your Emacs configuration. Here is an example configuration, using John Wiegley's =use-package=:
+Here is an example configuration, using John Wiegley's =use-package=:
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-randomnote
-    :load-path "~/src/org-randomnote/"
+    :ensure t
     :bind ("C-c r" . org-randomnote))
 #+END_SRC
 
