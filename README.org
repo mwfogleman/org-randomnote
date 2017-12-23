@@ -2,7 +2,12 @@
 
 ~org-randomnote~ intends to provide a way to bring randomness into your Org-Mode workflow. It does so by implementing the "Random Note" functionality popularized by Tiago Forte with Evernote in Emacs Org-Mode.
 
-Here is an example configuration, using John Wiegley's ~use-package~:
+Some people use Random Note functionality daily, as a way to revisit nearly-forgotten but potentially-useful notes, or to spark creative insights by bringing older subjects into mind with new subjects.
+
+** Installation and Configuration
+You can now use Melpa as usual: ~M-x package-install~ and then ~org-randomnote~.
+
+You can also use this example configuration, using John Wiegley's ~use-package~:
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-randomnote
@@ -10,6 +15,19 @@ Here is an example configuration, using John Wiegley's ~use-package~:
     :bind ("C-c r" . org-randomnote))
 #+END_SRC
 
+Then run ~eval-buffer~ on your ~.emacs~, or restart Emacs.
+
+In Spacemacs, you can put the ~use-package~ snippet above into ~dotspacemacs/user-config~, and add ~org-randomnote~ to your ~dotspacemacs-additional-packages~: 
+
+#+BEGIN_SRC emacs-lisp
+   dotspacemacs-additional-packages '(
+                                     org-randomnote
+                                      )
+#+END_SRC
+
+Then use ~SPC-f-e-R~ to synchronize your Spacemacs and load the package. 
+
+** Usage
 Once loaded, run the interactive command ~org-randomnote~.
 
 You can configure which files ~org-randomnote~ selects from with the variable ~org-randomnote-candidates~. It defaults to using ~org-agenda-files~, but you can use any list of files:
@@ -23,3 +41,19 @@ You can also configure the behavior with which ~org-randomnote~ opens files. By 
 #+BEGIN_SRC emacs-lisp
   (setq org-randomnote-open-behavior 'indirect-buffer)
 #+END_SRC
+
+To configure ~org-randomnote~ to use entire directories as sources, you can use this snippet:
+
+#+BEGIN_SRC emacs-lisp
+  (load-library "find-lisp")
+  (setq org-randomnote-candidates
+        (find-lisp-find-files "~/Documents/3 Resources" "\.org$"))
+#+END_SRC
+
+This way ~org-randomnote~ will find any org file in that folder. 
+
+However, be aware that you may see the warning ~org-randomnote: Wrong type argument: number-or-marker-p, nil~. This warning will crop up when ~org-randomnote~ brings up a file that doesn't have any actual Org headers (e.g. "* 1 Projects"). 
+
+For org-randomnote's purposes, a "note" is considered a heading in an Org file. In this way, an org file is somewhat analogous to a notebook in Evernote, whereas the individual headings are notes. 
+
+This is not necessarily intuitive or perfect, but it works well enough to begin with, especially since it can still find such a file randomly.
