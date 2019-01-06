@@ -73,6 +73,7 @@
   (org-tree-to-indirect-buffer)
   (switch-to-buffer (other-buffer)))
 
+;;;###autoload
 (defun org-randomnote ()
   "Go to a random note within a random Org file."
   (interactive)
