@@ -37,8 +37,8 @@
 (require 'f)
 (require 'org)
 
-(defvar org-randomnote-candidates org-agenda-files
-  "The files that org-randomnote will draw from in finding a random note.  Defaults to `org-agenda-files'.")
+(defvar org-randomnote-candidates (org-agenda-files)
+  "The files that org-randomnote will draw from in finding a random note.  Defaults to `(org-agenda-files)'.")
 
 (defvar org-randomnote-open-behavior 'default
   "Configure the behavior that org-randomnote uses to open a random note.  Set to `default' or `indirect-buffer'.")
