@@ -5,7 +5,7 @@
 ;; Author: Michael Fogleman <michaelwfogleman@gmail.com>
 ;; URL: http://github.com/mwfogleman/org-randomnote
 ;; Version: 0.1.0
-;; Package-Requires: ((f "0.19.0") (dash "2.12.0"))
+;; Package-Requires: ((f "0.19.0") (dash "2.12.0") org)
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -35,9 +35,10 @@
 
 (require 'dash)
 (require 'f)
+(require 'org)
 
-(defvar org-randomnote-candidates org-agenda-files
-  "The files that org-randomnote will draw from in finding a random note.  Defaults to `org-agenda-files'.")
+(defvar org-randomnote-candidates (org-agenda-files)
+  "The files that org-randomnote will draw from in finding a random note.  Defaults to `(org-agenda-files)'.")
 
 (defvar org-randomnote-open-behavior 'default
   "Configure the behavior that org-randomnote uses to open a random note.  Set to `default' or `indirect-buffer'.")
@@ -73,6 +74,7 @@
   (org-tree-to-indirect-buffer)
   (switch-to-buffer (other-buffer)))
 
+;;;###autoload
 (defun org-randomnote ()
   "Go to a random note within a random Org file."
   (interactive)
