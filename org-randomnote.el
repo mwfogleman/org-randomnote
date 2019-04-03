@@ -57,30 +57,31 @@
   "Select a random file from `org-randomnote-candidates'."
   (org-randomnote--random (org-randomnote--get-randomnote-candidates)))
 
-(defun org-randomnote--get-random-subtree (f)
-  "Get a random subtree within an Org file F."
+(defun org-randomnote--get-random-subtree (f match)
+  "Get a random subtree satisfying Org match within an Org file F."
   (find-file f)
-  (org-randomnote--random (org-map-entries (lambda () (line-number-at-pos)) nil 'file)))
+  (org-randomnote--random (org-map-entries (lambda () (line-number-at-pos)) match 'file)))
 
-(defun org-randomnote--go-to-random-header (f)
-  "Given an Org file F, go to a random header within that file."
-  (org-goto-line (org-randomnote--get-random-subtree f))
+(defun org-randomnote--go-to-random-header (f match)
+  "Given an Org file F, go to a random header satisfying Org match within that file."
+  (org-goto-line (org-randomnote--get-random-subtree f match))
   (outline-show-all)
   (recenter-top-bottom 0))
 
-(defun org-randomnote--with-indirect-buffer (f)
-  "Given an Org file F, go to a random header within that file."
-  (org-goto-line (org-randomnote--get-random-subtree f))
+(defun org-randomnote--with-indirect-buffer (f match)
+  "Given an Org file F, go to a random header satisfying Org match within that file."
+  (org-goto-line (org-randomnote--get-random-subtree f match))
   (org-tree-to-indirect-buffer)
   (switch-to-buffer (other-buffer)))
 
 ;;;###autoload
-(defun org-randomnote ()
-  "Go to a random note within a random Org file."
+(defun org-randomnote (&optional match)
+  "Go to a random note satisfying Org match within a random Org file."
   (interactive)
-  (let* ((f (org-randomnote--get-random-file)))
-    (cond ((eq org-randomnote-open-behavior 'default) (org-randomnote--go-to-random-header f))
-	  ((eq org-randomnote-open-behavior 'indirect-buffer) (org-randomnote--with-indirect-buffer f)))))
+  (let* ((f (org-randomnote--get-random-file))
+         (match (or match nil)))
+    (cond ((eq org-randomnote-open-behavior 'default) (org-randomnote--go-to-random-header f match))
+          ((eq org-randomnote-open-behavior 'indirect-buffer) (org-randomnote--with-indirect-buffer f match)))))
 
 (provide 'org-randomnote)
 
