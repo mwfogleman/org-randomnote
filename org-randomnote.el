@@ -4,7 +4,6 @@
 
 ;; Author: Michael Fogleman <michaelwfogleman@gmail.com>
 ;; URL: http://github.com/mwfogleman/org-randomnote
-;; Package-Version: 20190403.1633
 ;; Version: 0.1.0
 ;; Package-Requires: ((f "0.19.0") (dash "2.12.0") org)
 
@@ -38,20 +37,13 @@
 (require 'f)
 (require 'org)
 
+;;;###autoload
 (defcustom org-randomnote-candidates (org-agenda-files)
   "The files that org-randomnote will draw from in finding a random note.  Defaults to `(org-agenda-files)'."
   :group 'org-randomnote
   :type '(repeat :tag "List of files and directories" file)
-  :set
-  (lambda (sym value)
-    (set sym value)
-    (setq org-randomnote--file-to-header-count
-          (-map (lambda (f) (cons f 0))
-                org-randomnote-candidates))
-    (setq org-randomnote--file-to-tick-count
-          (-map (lambda (f) (cons f 0))
-                org-randomnote-candidates))
-    (org-randomnote--update-header-count)))
+  :initialize #'custom-initialize-default
+  :set #'org-randomnote--candidates-set)
 
 (defvar org-randomnote-open-behavior 'default
   "Configure the behavior that org-randomnote uses to open a random note.  Set to `default' or `indirect-buffer'.")
@@ -68,6 +60,20 @@ user-serviceable.")
 (defvar org-randomnote--update-header-count-timer nil
   "Timer that calls `org-randomnote--update-header-count'. Not
 user-serviceable.")
+
+(defun org-randomnote--init-alists ()
+  (setq org-randomnote--file-to-header-count
+        (-map (lambda (f) (cons f 0))
+              org-randomnote-candidates))
+  (setq org-randomnote--file-to-tick-count
+        (-map (lambda (f) (cons f 0))
+              org-randomnote-candidates)))
+
+(defun org-randomnote--candidates-set (sym value)
+  "Function called by :set on `org-randomnote-candidates'."
+    (set sym value)
+    (org-randomnote--init-alists)
+    (org-randomnote--update-header-count))
 
 (defun org-randomnote--update-header-count ()
   "Update the header count for random choices."
@@ -152,6 +158,7 @@ number of headers within each candidate file."
   (when (null org-randomnote--update-header-count-timer)
     ;; First update header count and block to ensure it's updated, then store
     ;; timer to repeat this every 30 seconds from now on.
+    (org-randomnote--init-alists)
     (org-randomnote--update-header-count)
     (setq org-randomnote--update-header-count-timer
           (run-at-time 30 30 #'org-randomnote--update-header-count)))
