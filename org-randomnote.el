@@ -37,11 +37,67 @@
 (require 'f)
 (require 'org)
 
-(defvar org-randomnote-candidates (org-agenda-files)
-  "The files that org-randomnote will draw from in finding a random note.  Defaults to `(org-agenda-files)'.")
+;;;###autoload
+(defcustom org-randomnote-candidates (org-agenda-files)
+  "The files that org-randomnote will draw from in finding a random note.  Defaults to `(org-agenda-files)'."
+  :group 'org-randomnote
+  :type '(repeat :tag "List of files and directories" file)
+  :initialize #'custom-initialize-default
+  :set #'org-randomnote--candidates-set)
 
 (defvar org-randomnote-open-behavior 'default
   "Configure the behavior that org-randomnote uses to open a random note.  Set to `default' or `indirect-buffer'.")
+
+(defvar org-randomnote--file-to-header-count ()
+  "Association list mapping file names from org-randomnote-candidates to the
+number of headers within that file. Not user-serviceable.")
+
+(defvar org-randomnote--file-to-tick-count ()
+  "Association list mapping file names from org-randomnote-candidates to the
+value of calling `buffer-chars-modified-tick' in the buffer.  Not
+user-serviceable.")
+
+(defvar org-randomnote--update-header-count-timer nil
+  "Timer that calls `org-randomnote--update-header-count'. Not
+user-serviceable.")
+
+(defun org-randomnote--init-alists ()
+  (setq org-randomnote--file-to-header-count
+        (-map (lambda (f) (cons f 0))
+              org-randomnote-candidates))
+  (setq org-randomnote--file-to-tick-count
+        (-map (lambda (f) (cons f 0))
+              org-randomnote-candidates)))
+
+(defun org-randomnote--candidates-set (sym value)
+  "Function called by :set on `org-randomnote-candidates'."
+    (set sym value)
+    (org-randomnote--init-alists)
+    (org-randomnote--update-header-count))
+
+(defun org-randomnote--update-header-count ()
+  "Update the header count for random choices."
+  (dolist (f org-randomnote-candidates)
+    (let*  ((entry (assoc f org-randomnote--file-to-tick-count))
+            (old-ticks (cdr entry))
+            (new-ticks (buffer-chars-modified-tick
+                        (find-buffer-visiting f))))
+      (unless (and entry (equal old-ticks new-ticks))
+        (setcdr entry new-ticks)
+        (setcdr (assoc f org-randomnote--file-to-header-count)
+                (org-randomnote--count-headers f))))))
+
+(defun org-randomnote--count-headers (f)
+  "Count the number of Org headers in the file F."
+  (with-current-buffer (find-buffer-visiting f)
+    (save-restriction
+      (widen)
+      (save-excursion
+        (goto-char (point-min))
+        (let ((cnt (if (outline-on-heading-p) 1 0)))
+          (while (outline-next-heading)
+            (setq cnt (+ 1 cnt)))
+          cnt)))))
 
 (defun org-randomnote--get-randomnote-candidates ()
   "Remove empty files from `org-randomnote-candidates'."
@@ -50,12 +106,33 @@
 (defun org-randomnote--random (seq)
   "Given an input sequence SEQ, return a random output."
   (let* ((cnt (length seq))
-	 (nmbr (random cnt)))
+         (nmbr (random cnt)))
     (nth nmbr seq)))
 
 (defun org-randomnote--get-random-file ()
-  "Select a random file from `org-randomnote-candidates'."
-  (org-randomnote--random (org-randomnote--get-randomnote-candidates)))
+  "Select a random file from `org-randomnote-candidates', weighted by the
+number of headers within each candidate file."
+  (let*
+      ((cumulative-header-count-reversed
+        (-reduce-from
+         (lambda (acc x)
+           (if (null acc)
+               (list x)
+             (cons (cons (car x) (+ (cdr x) (cdr (first acc))))
+                   acc)))
+         nil
+         org-randomnote--file-to-header-count))
+       (total-header-count (cdar cumulative-header-count-reversed))
+       (cumulative-header-count (reverse
+                                 cumulative-header-count-reversed)))
+    (if (= total-header-count 0)
+        ;; No headers in any files - choose any random file.
+        (car (org-randomnote--random org-randomnote-candidates))
+      (let* ((r (random total-header-count)))
+        (car
+         (-first
+          (lambda (x) (< r (cdr x)))
+          cumulative-header-count))))))
 
 (defun org-randomnote--get-random-subtree (f match)
   "Get a random subtree satisfying Org match within an Org file F."
@@ -78,6 +155,13 @@
 (defun org-randomnote (&optional match)
   "Go to a random note satisfying Org match within a random Org file."
   (interactive)
+  (when (null org-randomnote--update-header-count-timer)
+    ;; First update header count and block to ensure it's updated, then store
+    ;; timer to repeat this every 30 seconds from now on.
+    (org-randomnote--init-alists)
+    (org-randomnote--update-header-count)
+    (setq org-randomnote--update-header-count-timer
+          (run-at-time 30 30 #'org-randomnote--update-header-count)))
   (let* ((f (org-randomnote--get-random-file))
          (match (or match nil)))
     (cond ((eq org-randomnote-open-behavior 'default) (org-randomnote--go-to-random-header f match))
