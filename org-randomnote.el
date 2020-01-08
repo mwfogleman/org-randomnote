@@ -47,20 +47,14 @@
   "Remove empty files from `org-randomnote-candidates'."
   (-remove 'f-empty? org-randomnote-candidates))
 
-(defun org-randomnote--random (seq)
-  "Given an input sequence SEQ, return a random output."
-  (let* ((cnt (length seq))
-	 (nmbr (random cnt)))
-    (nth nmbr seq)))
-
 (defun org-randomnote--get-random-file ()
   "Select a random file from `org-randomnote-candidates'."
-  (org-randomnote--random (org-randomnote--get-randomnote-candidates)))
+  (seq-random-elt (org-randomnote--get-randomnote-candidates)))
 
 (defun org-randomnote--get-random-subtree (f match)
   "Get a random subtree satisfying Org match within an Org file F."
   (find-file f)
-  (org-randomnote--random (org-map-entries (lambda () (line-number-at-pos)) match 'file)))
+  (seq-random-elt (org-map-entries (lambda () (line-number-at-pos)) match 'file)))
 
 (defun org-randomnote--go-to-random-header (f match)
   "Given an Org file F, go to a random header satisfying Org match within that file."
