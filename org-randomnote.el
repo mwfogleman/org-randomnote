@@ -44,8 +44,11 @@
   "Configure the behavior that org-randomnote uses to open a random note.  Set to `default' or `indirect-buffer'.")
 
 (defun org-randomnote--get-randomnote-candidates ()
-  "Remove empty files from `org-randomnote-candidates'."
-  (-remove 'f-empty? org-randomnote-candidates))
+  (if (eq org-randomnote-candidates 'current-buffer)
+      (list buffer-file-name)
+
+    ;; Remove empty files from `org-randomnote-candidates'.
+    (-remove 'f-empty? org-randomnote-candidates)))
 
 (defun org-randomnote--get-random-file ()
   "Select a random file from `org-randomnote-candidates'."
